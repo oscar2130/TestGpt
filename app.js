@@ -263,7 +263,8 @@ if (SpeechRecognition) {
   stopMicBtn.addEventListener("click", () => {
     isRecording = false;
     recognition.stop();
-    const finalSpeech = committedSpeechBuffer.trim();
+
+    const finalSpeech = (liveSpeechPreview || committedSpeechBuffer).trim();
     speechPreview.textContent = finalSpeech
       ? `최종 입력: ${finalSpeech}`
       : "인식된 발언이 없어요. 다시 시도해 주세요.";
@@ -273,9 +274,10 @@ if (SpeechRecognition) {
 
     if (finalSpeech) {
       handleUserMessage(finalSpeech);
-      committedSpeechBuffer = "";
-      liveSpeechPreview = "";
     }
+
+    committedSpeechBuffer = "";
+    liveSpeechPreview = "";
   });
 
   stopMicBtn.disabled = true;
