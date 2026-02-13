@@ -51,38 +51,61 @@ function detectCorrections(userText) {
     .map((rule) => `- "${userText}" → "${userText.replace(rule.pattern, rule.fix)}"`);
 }
 
+function getMeaningfulWords(text) {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z\s]/g, " ")
+    .split(/\s+/)
+    .filter((word) => word.length > 3 && !["with", "this", "that", "have", "from", "were", "what", "your"].includes(word));
+}
+
 function generateTutorReply(userText) {
   const lower = userText.toLowerCase();
 
   if (lower.includes("hello") || lower.includes("hi")) {
-    return "Hi! Nice to meet you. How are you today?";
+    return "Hi! Nice to meet you 😊 How's your day going?";
   }
 
   if (lower.includes("name")) {
-    return "Great! My name is English Buddy. What is your name?";
+    return "Love that! I'm English Buddy. What should I call you?";
   }
 
   if (lower.includes("i like")) {
-    return "Nice sentence! Why do you like it?";
+    return "That sounds great. What do you like most about it?";
   }
 
   if (lower.includes("because")) {
-    return "Good reason! Can you tell me one more thing?";
+    return "Nice explanation! Want to add one more reason?";
   }
 
   if (userText.length < 8) {
-    return "Good try! Please make one short full sentence.";
+    return "Good start! Try one full sentence, and take your time.";
   }
 
-  const followUps = [
-    "Awesome. Can you add one detail like time or place?",
-    "Great flow! Tell me one more sentence with because.",
-    "Nice! Can you ask me one short question too?",
-    "Good sentence. Please say the same idea in a new way."
+  const reactions = [
+    "I like how you said that.",
+    "That sounds natural.",
+    "Nice sentence!",
+    "You're doing really well."
   ];
-  const nextReply = followUps[replyCycleIndex % followUps.length];
+
+  const prompts = [
+    "Can you add a small detail like time or place?",
+    "Can you say one more sentence about the same topic?",
+    "How did you feel in that moment?",
+    "Can you turn that into a short question for me?"
+  ];
+
+  const keywords = getMeaningfulWords(userText);
+  const reaction = reactions[replyCycleIndex % reactions.length];
+  const prompt = prompts[replyCycleIndex % prompts.length];
   replyCycleIndex += 1;
-  return nextReply;
+
+  if (keywords.length) {
+    return `${reaction} You mentioned "${keywords[0]}" — ${prompt}`;
+  }
+
+
 }
 
 function buildFeedbackReport() {
@@ -128,7 +151,7 @@ function speakText(text) {
 
 function handleUserMessage(rawInput) {
   if (conversationEnded) {
-    addMessage("system", "새로운 대화를 위해 페이지를 새로고침 해주세요.");
+    addMessage("system", "이미 피드백이 생성됐어요. 새로 시작하려면 페이지를 새로고침해 주세요.");
     return;
   }
 
@@ -142,7 +165,7 @@ function handleUserMessage(rawInput) {
     const report = buildFeedbackReport();
     reportPanel.hidden = false;
     reportText.textContent = report;
-    addMessage("system", "대화를 종료하고 피드백 보고서를 생성했어요.");
+    addMessage("system", "좋아요! 여기까지 대화를 정리해서 피드백 보고서를 만들었어요.");
     return;
   }
 
@@ -155,13 +178,13 @@ function handleUserMessage(rawInput) {
 nextTopicBtn.addEventListener("click", () => {
   currentTopicIndex = (currentTopicIndex + 1) % curriculumTopics.length;
   updateTopic();
-  addMessage("system", `주제가 변경되었어요: ${curriculumTopics[currentTopicIndex]}`);
+  addMessage("system", `좋아요, 다음 주제로 가볼게요: ${curriculumTopics[currentTopicIndex]}`);
 });
 
 randomTopicBtn.addEventListener("click", () => {
   currentTopicIndex = Math.floor(Math.random() * curriculumTopics.length);
   updateTopic();
-  addMessage("system", `랜덤 주제로 바꿨어요: ${curriculumTopics[currentTopicIndex]}`);
+  addMessage("system", `분위기 전환! 랜덤 주제는 이것이에요: ${curriculumTopics[currentTopicIndex]}`);
 });
 
 chatForm.addEventListener("submit", (event) => {
@@ -219,18 +242,7 @@ if (SpeechRecognition) {
     isRecording = false;
     startMicBtn.disabled = false;
     stopMicBtn.disabled = true;
-  };
 
-  recognition.onend = () => {
-    if (isRecording) {
-      recognition.start();
-    }
-  };
-
-  startMicBtn.addEventListener("click", () => {
-    committedSpeechBuffer = "";
-    liveSpeechPreview = "";
-    speechPreview.textContent = "말하는 중... 발언이 끝나면 '발언 끝'을 누르세요.";
     isRecording = true;
     startMicBtn.disabled = true;
     stopMicBtn.disabled = false;
@@ -240,7 +252,7 @@ if (SpeechRecognition) {
   stopMicBtn.addEventListener("click", () => {
     isRecording = false;
     recognition.stop();
-    const finalSpeech = committedSpeechBuffer.trim();
+
     speechPreview.textContent = finalSpeech
       ? `최종 입력: ${finalSpeech}`
       : "인식된 발언이 없어요. 다시 시도해 주세요.";
@@ -250,9 +262,7 @@ if (SpeechRecognition) {
 
     if (finalSpeech) {
       handleUserMessage(finalSpeech);
-      committedSpeechBuffer = "";
-      liveSpeechPreview = "";
-    }
+
   });
 
   stopMicBtn.disabled = true;
@@ -264,5 +274,5 @@ if (SpeechRecognition) {
 }
 
 updateTopic();
-addMessage("bot", "Hello! I am your English buddy. Let's start with short sentences.");
-lastBotMessage = "Hello! I am your English buddy. Let's start with short sentences.";
+addMessage("bot", "Hey! I'm your English buddy. Let's chat in short, easy sentences.");
+lastBotMessage = "Hey! I'm your English buddy. Let's chat in short, easy sentences.";
