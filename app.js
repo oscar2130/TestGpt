@@ -61,51 +61,57 @@ function getMeaningfulWords(text) {
 
 function generateTutorReply(userText) {
   const lower = userText.toLowerCase();
+  const keywords = getMeaningfulWords(userText);
 
   if (lower.includes("hello") || lower.includes("hi")) {
-    return "Hi! Nice to meet you 😊 How's your day going?";
+    return "Hi! Glad you're here 😊 How's your day going so far?";
   }
 
   if (lower.includes("name")) {
-    return "Love that! I'm English Buddy. What should I call you?";
+    return "Nice to meet you! I'm English Buddy. What should I call you?";
   }
 
   if (lower.includes("i like")) {
-    return "That sounds great. What do you like most about it?";
+    return "That sounds fun. What do you like most about it?";
   }
 
   if (lower.includes("because")) {
-    return "Nice explanation! Want to add one more reason?";
+    return "Good reason 👍 Can you add one more short reason?";
   }
 
   if (userText.length < 8) {
-    return "Good start! Try one full sentence, and take your time.";
+    return "Nice start! Try one full short sentence, and I'll help you build it.";
   }
 
-  const reactions = [
-    "I like how you said that.",
+  const openers = [
+    "Great line.",
     "That sounds natural.",
-    "Nice sentence!",
-    "You're doing really well."
+    "Nice phrasing.",
+    "I like that sentence."
   ];
 
-  const prompts = [
-    "Can you add a small detail like time or place?",
-    "Can you say one more sentence about the same topic?",
-    "How did you feel in that moment?",
-    "Can you turn that into a short question for me?"
+  const followUps = [
+    "What happened next?",
+    "Can you give one specific detail?",
+    "How did you feel at that moment?",
+    "Can you ask me one related question?"
   ];
 
-  const keywords = getMeaningfulWords(userText);
-  const reaction = reactions[replyCycleIndex % reactions.length];
-  const prompt = prompts[replyCycleIndex % prompts.length];
+  const tone = [
+    "You're getting smoother every turn.",
+    "Your flow is improving.",
+    "This is easy to understand.",
+    "You're expressing your idea clearly."
+  ];
+
+  const idx = replyCycleIndex % openers.length;
   replyCycleIndex += 1;
 
   if (keywords.length) {
-    return `${reaction} You mentioned "${keywords[0]}" — ${prompt}`;
+    return `${openers[idx]} You mentioned "${keywords[0]}". ${followUps[idx]} ${tone[idx]}`;
   }
 
-  return `${reaction} ${prompt}`;
+  return `${openers[idx]} ${followUps[idx]} ${tone[idx]}`;
 }
 
 function buildFeedbackReport() {
