@@ -105,7 +105,7 @@ function generateTutorReply(userText) {
     return `${reaction} You mentioned "${keywords[0]}" — ${prompt}`;
   }
 
-  return `${reaction} ${prompt}`;
+
 }
 
 function buildFeedbackReport() {
@@ -242,18 +242,7 @@ if (SpeechRecognition) {
     isRecording = false;
     startMicBtn.disabled = false;
     stopMicBtn.disabled = true;
-  };
 
-  recognition.onend = () => {
-    if (isRecording) {
-      recognition.start();
-    }
-  };
-
-  startMicBtn.addEventListener("click", () => {
-    committedSpeechBuffer = "";
-    liveSpeechPreview = "";
-    speechPreview.textContent = "듣고 있어요 👂 말이 끝나면 '발언 끝'을 눌러 주세요.";
     isRecording = true;
     startMicBtn.disabled = true;
     stopMicBtn.disabled = false;
@@ -264,7 +253,6 @@ if (SpeechRecognition) {
     isRecording = false;
     recognition.stop();
 
-    const finalSpeech = (liveSpeechPreview || committedSpeechBuffer).trim();
     speechPreview.textContent = finalSpeech
       ? `최종 입력: ${finalSpeech}`
       : "인식된 발언이 없어요. 다시 시도해 주세요.";
@@ -274,10 +262,7 @@ if (SpeechRecognition) {
 
     if (finalSpeech) {
       handleUserMessage(finalSpeech);
-    }
 
-    committedSpeechBuffer = "";
-    liveSpeechPreview = "";
   });
 
   stopMicBtn.disabled = true;
