@@ -243,16 +243,6 @@ if (SpeechRecognition) {
     startMicBtn.disabled = false;
     stopMicBtn.disabled = true;
 
-    isRecording = true;
-    startMicBtn.disabled = true;
-    stopMicBtn.disabled = false;
-    recognition.start();
-  });
-
-  stopMicBtn.addEventListener("click", () => {
-    isRecording = false;
-    recognition.stop();
-
     speechPreview.textContent = finalSpeech
       ? `최종 입력: ${finalSpeech}`
       : "인식된 발언이 없어요. 다시 시도해 주세요.";
