@@ -1,7 +1,11 @@
 :root {
   font-family: "Inter", "Noto Sans KR", system-ui, -apple-system, sans-serif;
-  color: #15213b;
-  background: radial-gradient(circle at top, #eef2ff 0%, #e7ecff 45%, #e1e7ff 100%);
+  color: #12213f;
+  background: linear-gradient(145deg, #edf2ff 0%, #e7eeff 42%, #e1fff4 100%);
+  --card-bg: rgba(255, 255, 255, 0.88);
+  --card-border: rgba(255, 255, 255, 0.75);
+  --primary: #3858ff;
+  --primary-strong: #2644e8;
 }
 
 * {
@@ -11,61 +15,91 @@
 body {
   margin: 0;
   min-height: 100vh;
+  color: #162443;
 }
 
 .app {
-  max-width: 920px;
+  max-width: 980px;
   margin: 0 auto;
   padding: 14px;
 }
 
+.hero {
+  background: linear-gradient(140deg, #132042, #23408f 55%, #2f63c8);
+  color: #f6f9ff;
+  border-radius: 24px;
+  padding: 18px;
+  box-shadow: 0 18px 34px rgba(22, 32, 66, 0.28);
+  margin-bottom: 12px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: rgba(241, 246, 255, 0.84);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 header h1 {
-  margin: 4px 0 6px;
-  font-size: clamp(1.7rem, 6vw, 2.7rem);
-  letter-spacing: -0.02em;
+  margin: 0;
+  font-size: clamp(1.65rem, 6.4vw, 2.5rem);
+  line-height: 1.1;
+}
+
+.version {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  vertical-align: middle;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 header p {
-  margin: 0;
-  color: #3d4b71;
+  margin: 8px 0 0;
+  color: rgba(241, 246, 255, 0.9);
 }
 
 .sub-guide {
-  margin-top: 8px;
+  margin-top: 10px;
   padding: 10px 12px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid #d9e2ff;
-  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 0.94rem;
 }
 
 .top-panel {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 10px;
-  margin-top: 12px;
+  gap: 12px;
 }
 
 .topic-box,
 .voice-box,
 .chat-panel,
 .report-panel {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 18px;
+  background: var(--card-bg);
+  border-radius: 20px;
   padding: 16px;
-  box-shadow: 0 12px 30px rgba(41, 68, 148, 0.12);
-  border: 1px solid #dfe6ff;
+  box-shadow: 0 12px 24px rgba(50, 72, 136, 0.14);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(8px);
 }
 
 h2 {
   margin-top: 0;
   margin-bottom: 10px;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
 }
 
 .chat-panel,
 .report-panel {
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .topic-actions,
@@ -78,29 +112,39 @@ h2 {
 button {
   border: none;
   border-radius: 12px;
-  padding: 10px 13px;
-  background: linear-gradient(120deg, #2f57f8, #4b6bff);
+  padding: 11px 14px;
+  background: linear-gradient(135deg, var(--primary), #5884ff);
   color: white;
   cursor: pointer;
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-weight: 700;
+  font-size: 0.94rem;
+  box-shadow: 0 8px 18px rgba(56, 88, 255, 0.28);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(43, 70, 199, 0.32);
+  background: linear-gradient(135deg, var(--primary-strong), #4f78f1);
 }
 
 button:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .chat-log {
-  height: 45vh;
-  min-height: 300px;
-  max-height: 480px;
+  height: 48vh;
+  min-height: 320px;
+  max-height: 520px;
   overflow-y: auto;
-  border: 1px solid #d9e3ff;
-  border-radius: 14px;
+  border: 1px solid #dbe4ff;
+  border-radius: 16px;
   padding: 12px;
   margin-bottom: 10px;
-  background: #f8faff;
+  background: linear-gradient(180deg, #f8fbff 0%, #f2f7ff 100%);
 }
 
 .msg {
@@ -109,19 +153,20 @@ button:disabled {
   border-radius: 12px;
   max-width: 90%;
   line-height: 1.45;
+  box-shadow: 0 2px 8px rgba(34, 56, 110, 0.08);
 }
 
 .msg.user {
   margin-left: auto;
-  background: #dfe7ff;
+  background: #dbe5ff;
 }
 
 .msg.bot {
-  background: #e8f7ec;
+  background: #e2f6ea;
 }
 
 .msg.system {
-  background: #fff4de;
+  background: #fff1d7;
   max-width: 100%;
 }
 
@@ -134,22 +179,23 @@ button:disabled {
   flex: 1;
   border: 1px solid #c8d6ff;
   border-radius: 12px;
-  padding: 11px;
+  padding: 12px;
   font-size: 16px;
+  background: #ffffff;
 }
 
 .hint,
 .support {
   margin-top: 0;
-  color: #4a5982;
+  color: #465a89;
 }
 
 .voice-preview {
-  padding: 8px 10px;
-  border-radius: 10px;
-  background: #f2f6ff;
-  border: 1px dashed #c8d5ff;
-  min-height: 42px;
+  padding: 10px;
+  border-radius: 12px;
+  background: #eff4ff;
+  border: 1px dashed #c4d5ff;
+  min-height: 44px;
 }
 
 pre {
@@ -159,15 +205,14 @@ pre {
 
 @media (min-width: 760px) {
   .app {
-    padding: 20px;
+    padding: 22px;
   }
 
   .top-panel {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
   }
 
   .msg {
-    max-width: 85%;
+    max-width: 84%;
   }
 }
