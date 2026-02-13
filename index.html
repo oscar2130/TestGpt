@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>English Buddy Classroom</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header>
+        <h1>English Buddy Classroom</h1>
+        <p>짧은 문장으로 자유 대화를 이어가요. (초등학생 학습 스타일)</p>
+      </header>
+
+      <section class="top-panel">
+        <div class="topic-box">
+          <h2>오늘의 커리큘럼</h2>
+          <p id="topicText"></p>
+          <div class="topic-actions">
+            <button id="nextTopicBtn">다음 주제</button>
+            <button id="randomTopicBtn">랜덤 주제</button>
+          </div>
+        </div>
+
+        <div class="voice-box">
+          <h2>음성 기능</h2>
+          <p class="support" id="speechSupport"></p>
+          <div class="voice-actions">
+            <button id="startMicBtn">🎤 듣기 시작</button>
+            <button id="stopMicBtn">🛑 듣기 중지</button>
+            <button id="speakBotBtn">🔊 마지막 답변 다시 듣기</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="chat-panel">
+        <h2>실시간 텍스트 대화</h2>
+        <div id="chatLog" class="chat-log" aria-live="polite"></div>
+        <p class="hint">
+          팁: 입력창에 <code>feedback please</code> 라고 쓰면 대화를 종료하고 한국어 피드백 보고서가 나와요.
+        </p>
+        <form id="chatForm">
+          <input id="messageInput" type="text" placeholder="영어로 짧게 말해보세요." autocomplete="off" />
+          <button type="submit">보내기</button>
+        </form>
+      </section>
+
+      <section class="report-panel" id="reportPanel" hidden>
+        <h2>대화 피드백 보고서 (한국어)</h2>
+        <pre id="reportText"></pre>
+      </section>
+    </main>
+
+    <script src="curriculum.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
