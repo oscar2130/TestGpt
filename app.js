@@ -7,6 +7,7 @@ const messageInput = document.getElementById("messageInput");
 const reportPanel = document.getElementById("reportPanel");
 const reportText = document.getElementById("reportText");
 const speechSupport = document.getElementById("speechSupport");
+const speechPreview = document.getElementById("speechPreview");
 const startMicBtn = document.getElementById("startMicBtn");
 const stopMicBtn = document.getElementById("stopMicBtn");
 const speakBotBtn = document.getElementById("speakBotBtn");
@@ -15,6 +16,7 @@ let currentTopicIndex = 0;
 let conversationHistory = [];
 let conversationEnded = false;
 let lastBotMessage = "";
+let replyCycleIndex = 0;
 
 function updateTopic() {
   topicText.textContent = curriculumTopics[currentTopicIndex];
@@ -72,7 +74,15 @@ function generateTutorReply(userText) {
     return "Good try! Please make one short full sentence.";
   }
 
-  return "Good job! Please tell me more in one or two short sentences.";
+  const followUps = [
+    "Awesome. Can you add one detail like time or place?",
+    "Great flow! Tell me one more sentence with because.",
+    "Nice! Can you ask me one short question too?",
+    "Good sentence. Please say the same idea in a new way."
+  ];
+  const nextReply = followUps[replyCycleIndex % followUps.length];
+  replyCycleIndex += 1;
+  return nextReply;
 }
 
 function buildFeedbackReport() {
@@ -169,6 +179,9 @@ speakBotBtn.addEventListener("click", () => {
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition;
+let isRecording = false;
+let committedSpeechBuffer = "";
+let liveSpeechPreview = "";
 
 if (SpeechRecognition) {
   speechSupport.textContent = "브라우저 음성인식 지원: 가능";
@@ -178,26 +191,74 @@ if (SpeechRecognition) {
   recognition.continuous = true;
 
   recognition.onresult = (event) => {
-    let finalText = "";
+    let finalChunk = "";
+    let interimChunk = "";
+
     for (let i = event.resultIndex; i < event.results.length; i += 1) {
+      const transcript = event.results[i][0].transcript.trim();
+      if (!transcript) continue;
       if (event.results[i].isFinal) {
-        finalText += event.results[i][0].transcript;
+        finalChunk += `${transcript} `;
+      } else {
+        interimChunk += `${transcript} `;
       }
     }
 
-    if (finalText) {
-      handleUserMessage(finalText);
+    if (finalChunk) {
+      committedSpeechBuffer = `${committedSpeechBuffer} ${finalChunk}`.trim();
     }
+
+    liveSpeechPreview = `${committedSpeechBuffer} ${interimChunk}`.trim();
+    speechPreview.textContent = liveSpeechPreview
+      ? `인식 중: ${liveSpeechPreview}`
+      : "음성 입력 대기 중...";
   };
 
   recognition.onerror = () => {
     addMessage("system", "음성 인식 오류가 발생했어요. 다시 시도해 주세요.");
+    isRecording = false;
+    startMicBtn.disabled = false;
+    stopMicBtn.disabled = true;
   };
 
-  startMicBtn.addEventListener("click", () => recognition.start());
-  stopMicBtn.addEventListener("click", () => recognition.stop());
+  recognition.onend = () => {
+    if (isRecording) {
+      recognition.start();
+    }
+  };
+
+  startMicBtn.addEventListener("click", () => {
+    committedSpeechBuffer = "";
+    liveSpeechPreview = "";
+    speechPreview.textContent = "말하는 중... 발언이 끝나면 '발언 끝'을 누르세요.";
+    isRecording = true;
+    startMicBtn.disabled = true;
+    stopMicBtn.disabled = false;
+    recognition.start();
+  });
+
+  stopMicBtn.addEventListener("click", () => {
+    isRecording = false;
+    recognition.stop();
+    const finalSpeech = committedSpeechBuffer.trim();
+    speechPreview.textContent = finalSpeech
+      ? `최종 입력: ${finalSpeech}`
+      : "인식된 발언이 없어요. 다시 시도해 주세요.";
+
+    startMicBtn.disabled = false;
+    stopMicBtn.disabled = true;
+
+    if (finalSpeech) {
+      handleUserMessage(finalSpeech);
+      committedSpeechBuffer = "";
+      liveSpeechPreview = "";
+    }
+  });
+
+  stopMicBtn.disabled = true;
 } else {
   speechSupport.textContent = "브라우저 음성인식 지원: 미지원 (텍스트 입력은 가능)";
+  speechPreview.textContent = "음성인식을 지원하지 않는 브라우저예요.";
   startMicBtn.disabled = true;
   stopMicBtn.disabled = true;
 }
